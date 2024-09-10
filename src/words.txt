@@ -1,0 +1,30 @@
+Ford
+Toyota
+Chevrolet
+Honda
+Nissan
+Volkswagen
+BMW
+Kia
+Hyundai
+Tesla
+Pelican
+Pochard
+Gadwall
+Bittern
+Buzzard
+Goshawk
+Sparrow
+Warbler
+Sandpiper
+Nightjar
+Zhytomyr (Ukraine)
+Xalapa (Mexico)
+Thessaloniki (Greece)
+Ouagadougou (Burkina Faso)
+Szczecin (Poland)
+Tbilisi (Georgia)
+Chelyabinsk (Russia)
+Krasnoyarsk (Russia)
+Wroclaw (Poland)
+Yerevan (Armenia)
