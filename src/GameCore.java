@@ -21,6 +21,10 @@ public class GameCore {
         return hiddenWord;
     }
 
+    public void setHiddenWord(StringBuilder hiddenWord){
+        this.hiddenWord = hiddenWord;
+    }
+
     public int getCounter(){
         return counter;
     }
@@ -66,16 +70,21 @@ public class GameCore {
             } else{
                 letterMap.put(inputChar, 1);
                 setCounter(getCounter() - 1);
-
+                setHiddenWord(WordContainsLetter.containsLetter(inputChar, getWord(), getHiddenWord())); //если слово содержит букву - обновляем скрытое слово
+                System.out.println("Если знаете слово - введите. Если нет - нажмите \"Enter\": ");
+                String guessWord = (new BufferedReader(new InputStreamReader(System.in))).readLine();
+                if(guessWord.equalsIgnoreCase(word)){
+                    System.out.println("Вы выиграли!");
+                    setHiddenWord(new StringBuilder(guessWord));
+                    break;
+                }
             }
-
-
-
-
-
-
+        } while (counter > 0);
+        if(getHiddenWord().toString().equalsIgnoreCase(getWord())){
+            System.out.println("Слово отгадано верно!");
+        } else{
+            System.out.println("Вам не удалось отгадать слово.");
         }
-
 
 
     }
