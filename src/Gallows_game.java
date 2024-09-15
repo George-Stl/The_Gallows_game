@@ -1,7 +1,12 @@
+package backend.academy;
+
+import lombok.experimental.UtilityClass;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+
+@UtilityClass
 public class Gallows_game {
     public static void main(String[] args) throws IOException, InterruptedException {
         Thread gameThread;
@@ -17,7 +22,7 @@ public class Gallows_game {
                 difficulty = getDifficultyValue(inputDifficulty.readLine());
                 if(difficulty < 0){
                     System.out.println("Вы ввели неверное значение." + "\n" +
-                            "Для выбора уровня сложности по умолчанию нажмите \"Enter\"");
+                        "Для выбора уровня сложности по умолчанию нажмите \"Enter\"");
                     continue;
                 }
                 cycleControlVariable = false;
@@ -31,12 +36,12 @@ public class Gallows_game {
             int wordCategory;
             do{
                 System.out.println("Выберите категорию слов: машины (легко), ученые (средне) или столицы (сложно)." +
-                        "\n" + "Введите только одно слово: машины, ученые или столицы: ");
+                    "\n" + "Введите только одно слово: машины, ученые или столицы: ");
                 BufferedReader inputWord = new BufferedReader(new InputStreamReader(System.in));
                 wordCategory = getWordCategory(getFirstWord(inputWord.readLine().trim().toLowerCase()));
                 if(wordCategory < 0){
                     System.out.println("Вы ввели неверную категорию слов." + "\n" +
-                            "Для выбора категории слов по умолчанию нажмите \"Enter\"");
+                        "Для выбора категории слов по умолчанию нажмите \"Enter\"");
                     continue;
                 }
                 cycleControlVariable = false;

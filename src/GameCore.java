@@ -1,8 +1,9 @@
+package backend.academy;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
-import java.util.Scanner;
 
 public class GameCore {
     private int counter; // количество попыток
@@ -96,11 +97,4 @@ public class GameCore {
     public static boolean isRussianLetter(char c) {
         return ( c >= 'а' && c <= 'я');
     }
-
-
-
-
-
-
-
 }

@@ -1,4 +1,5 @@
-import java.util.Set;
+package backend.academy;
+
 
 public class GameVisual {
     private int difficulty;

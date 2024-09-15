@@ -1,3 +1,5 @@
+package backend.academy;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -17,12 +19,12 @@ public class WordList {
     public WordList() throws FileNotFoundException{
         wordsMap = new HashMap<>();
         for(int i = 1; i <= 3; i++){
-            String filePath = "..\\HangmanGame\\src\\words"
+            String filePath = "..\\backend_academy_2024_project_1-java-George-Stl\\src\\main\\java\\backend\\academy\\words"
                     + i + ".txt";
             try{
                 wordsMap.put(i, addWordsToList(filePath));
             } catch (FileNotFoundException e) {
-                System.out.println("Проблема считывания файлов .txt");;
+                System.out.println("Проблема считывания файлов .txt");
             }
 
         }

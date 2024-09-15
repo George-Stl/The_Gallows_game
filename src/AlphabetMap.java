@@ -1,3 +1,5 @@
+package backend.academy;
+
 import java.util.HashMap;
 import java.util.Map;
 
