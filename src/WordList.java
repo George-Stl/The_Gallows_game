@@ -17,7 +17,7 @@ public class WordList {
     public WordList() throws FileNotFoundException{
         wordsMap = new HashMap<>();
         for(int i = 1; i <= 3; i++){
-            String filePath = "D:\\Backend_Academy_T-Bank\\gallows_game\\src\\words"
+            String filePath = "..\\HangmanGame\\src\\words"
                     + i + ".txt";
             try{
                 wordsMap.put(i, addWordsToList(filePath));
@@ -30,22 +30,17 @@ public class WordList {
 
     //метод для считывания файлов из .txt и добавления в List
     public List<String> addWordsToList(String filePath) throws FileNotFoundException {
-        List<String> wordsList = new ArrayList<>();
+        List<String> wordsList = new ArrayList<>(); //словарь слов с подсказками
         File file = new File(filePath);
         Scanner scanner = new Scanner(file);
         while (scanner.hasNextLine()) {
-            int spaceIndex = scanner.nextLine().trim().indexOf(' ');
-            if (spaceIndex != -1) {
-                wordsList.add(scanner.nextLine().trim().substring(0, spaceIndex));
-            } else {
-                wordsList.add(scanner.nextLine().trim());
-            }
+            wordsList.add(scanner.nextLine().trim());
         }
         scanner.close();
         return wordsList;
     }
 
-    //из выбранной категории слов вернуть одно рандомное
+    //из выбранной категории слов вернуть одно случайное слово с подсказкой
     public String getWordFromList(int category){
         List<String> wordList = getWordsMap().get(category);
         Collections.shuffle(wordList);

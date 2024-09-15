@@ -7,7 +7,9 @@ import java.util.Scanner;
 public class GameCore {
     private int counter; // количество попыток
     private String word; // отгадываемое слово
+    private String hint;
     private StringBuilder hiddenWord = new StringBuilder(); // скрытое отгадываемое слово
+    private GameVisual gameVisual;
 
     public String getWord(){
         return this.word;
@@ -33,67 +35,70 @@ public class GameCore {
         this.counter = counter;
     }
 
-    public GameCore(int difficulty, String word){
-        GameVisual gameVisual = new GameVisual(difficulty);
+    private String getHint(){
+        return hint;
+    }
+
+    public GameCore(int difficulty, String word, String hint){
+        gameVisual = new GameVisual(difficulty);
         switch (difficulty){
             case 1: this.counter = 11; break; //полное количество попыток
             case 2: this.counter = 8; break; // в зависимости
             case 3: this.counter = 6; break; // от уровня сложности
         }
         this.word = word;
-        hiddenWord.append("_".repeat(word.length()));
+        this.hint = hint;
+        this.hiddenWord.append("_".repeat(word.length()));
     }
 
     //тело игры
     public void start() throws IOException {
-        int numberOfAttempts = getCounter(); //переменная управления циклом
+
         Map<Character, Integer> letterMap = AlphabetMap.fillMap(); //карта проверит, была ли буква уже использована
-        char inputChar;
+
         do{
-            GameVisual.gameVisual(counter, hiddenWord);
+            gameVisual.gameVisual(getCounter(), getHiddenWord(), getHint());
             System.out.println("Введите букву: ");
-            String inputLetter = (new BufferedReader(new InputStreamReader(System.in))).readLine().trim();
-            inputChar = Character.toLowerCase(inputLetter.charAt(0));
-            if(inputLetter.length() != 1 || !isLatinLetter(inputChar)){
-                System.out.println("Ввод некорректен, попробуйте ещё раз. (нажмите Enter)");
-                Scanner pressEnter = new Scanner(System.in);
-                String button = pressEnter.nextLine();
-                pressEnter.close();
-                continue;
+            String inputLetter = (new BufferedReader(new InputStreamReader(System.in))).readLine().trim().toLowerCase();
+            char inputChar = inputLetter.charAt(0);
+
+            //проверка правильности ввода
+            if(inputLetter.length() != 1 || !isRussianLetter(inputChar) || letterMap.get(inputChar) != 0){
+                System.out.println("Ввод некорректен, попробуйте ещё раз.");
+                do{
+                    System.out.println("Введите букву (от \"а\" до \"я\" русского алфавита: ");
+                    inputLetter = (new BufferedReader(new InputStreamReader(System.in))).readLine().trim().toLowerCase();
+                    inputChar = inputLetter.charAt(0);
+                    if(letterMap.get(inputChar) != 0) {
+                        System.out.println("Данная буква уже была использована, введите другую.");
+                    }
+                }while(inputLetter.length() != 1 || !isRussianLetter(inputChar) || letterMap.get(inputChar) != 0);
             }
-            else if(letterMap.get(inputChar) != 0){
-                System.out.println("Данная буква уже была использована, введите другую. (нажмите Enter)");
-                Scanner pressEnter = new Scanner(System.in);
-                String button = pressEnter.nextLine();
-                pressEnter.close();
-                continue;
-            } else{
-                letterMap.put(inputChar, 1);
+
+            letterMap.put(inputChar, 1);
+            StringBuilder modifiedHiddenWord = WordContainsLetter.
+                    containsLetter(inputChar, getWord(), getHiddenWord());//проверка, содержит ли слово букву. Возвращает обновленное скрытое слово
+            if(modifiedHiddenWord.compareTo(getHiddenWord()) == 0){ //если скрытое слово не изменилось, значит, такой буквы нет и число попыток уменьшается
                 setCounter(getCounter() - 1);
-                setHiddenWord(WordContainsLetter.containsLetter(inputChar, getWord(), getHiddenWord())); //если слово содержит букву - обновляем скрытое слово
-                System.out.println("Если знаете слово - введите. Если нет - нажмите \"Enter\": ");
-                String guessWord = (new BufferedReader(new InputStreamReader(System.in))).readLine();
-                if(guessWord.equalsIgnoreCase(word)){
-                    System.out.println("Вы выиграли!");
-                    setHiddenWord(new StringBuilder(guessWord));
-                    break;
-                }
             }
-        } while (counter > 0);
+            setHiddenWord(modifiedHiddenWord); //обновить скрытое слово
+
+        } while (getCounter() > 0 && !(getHiddenWord().toString().equalsIgnoreCase(getWord())));
         if(getHiddenWord().toString().equalsIgnoreCase(getWord())){
             System.out.println("Слово отгадано верно!");
-        } else{
+        } else {
             System.out.println("Вам не удалось отгадать слово.");
         }
+        System.out.println("Загаданное слово: " + getWord());
+    }
 
-
+    //проверяет, что введенная буква принадлежит русскому алфавиту
+    public static boolean isRussianLetter(char c) {
+        return ( c >= 'а' && c <= 'я');
     }
 
 
-    //проверяет, что введенная буква принадлежит латинскому алфавиту
-    public static boolean isLatinLetter(char c) {
-        return ( c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-    }
+
 
 
 

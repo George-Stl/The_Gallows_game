@@ -3,67 +3,74 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Gallows_game {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        Thread gameThread;
+        while (true) {
+            //переменная управления циклами
+            boolean cycleControlVariable = true;
 
-        //переменная управления циклами
-        boolean cycleControlVariable = true;
+            //пользовательский выбор уровня сложности
+            int difficulty;
+            do{
+                System.out.println("Введите желаемый уровень сложности (1, 2 или 3): ");
+                BufferedReader inputDifficulty = new BufferedReader(new InputStreamReader(System.in));
+                difficulty = getDifficultyValue(inputDifficulty.readLine());
+                if(difficulty < 0){
+                    System.out.println("Вы ввели неверное значение." + "\n" +
+                            "Для выбора уровня сложности по умолчанию нажмите \"Enter\"");
+                    continue;
+                }
+                cycleControlVariable = false;
+            } while(cycleControlVariable);
 
+            //создание списка слов
+            WordList wordList = new WordList();
 
+            //пользовательский выбор категории слов
+            cycleControlVariable = true;
+            int wordCategory;
+            do{
+                System.out.println("Выберите категорию слов: машины (легко), ученые (средне) или столицы (сложно)." +
+                        "\n" + "Введите только одно слово: машины, ученые или столицы: ");
+                BufferedReader inputWord = new BufferedReader(new InputStreamReader(System.in));
+                wordCategory = getWordCategory(getFirstWord(inputWord.readLine().trim().toLowerCase()));
+                if(wordCategory < 0){
+                    System.out.println("Вы ввели неверную категорию слов." + "\n" +
+                            "Для выбора категории слов по умолчанию нажмите \"Enter\"");
+                    continue;
+                }
+                cycleControlVariable = false;
+            } while(cycleControlVariable);
 
-        //пользовательский выбор уровня сложности
-        int difficulty;
-        do{
-            System.out.println("Введите желаемый уровень сложности (1, 2 или 3): ");
-            BufferedReader inputDifficulty = new BufferedReader(new InputStreamReader(System.in));
-            difficulty = getDifficultyValue(inputDifficulty.readLine());
-            if(difficulty < 0){
-                System.out.println("Вы ввели неверное значение." + "\n" +
-                        "Для выбора уровня сложности по умолчанию нажмите \"Enter\"");
-                continue;
+            //получить слово для угадывания и подсказку
+            String wordWithHint = wordList.getWordFromList(wordCategory);
+            int spaceIndex = wordWithHint.indexOf(' ');
+            String word = wordWithHint.substring(0, spaceIndex).toLowerCase(); //слово для угадывания
+            String hint = wordWithHint.substring(spaceIndex); //подсказка к этому слову
+
+            //ядро игры
+            GameCore game = new GameCore(difficulty, word, hint);
+            gameThread = new Thread(() -> {
+                try {
+                    game.start();
+                } catch (IOException e) {
+                    System.out.println("Не удалось считать пользовательский ввод внутри метода game.start()");
+                }
+            });
+            gameThread.start();
+
+            // ожидание завершения потока игры
+            gameThread.join();
+
+            // перезапуск игры
+            System.out.println("Хотите сыграть еще раз? да/нет: ");
+            BufferedReader inputPlayAgain = new BufferedReader(new InputStreamReader(System.in));
+            String playAgainResponse = inputPlayAgain.readLine().trim().toLowerCase();
+
+            if (!playAgainResponse.equalsIgnoreCase("да")) {
+                break;
             }
-            cycleControlVariable = false;
-        } while(cycleControlVariable);
-
-        //создание списка слов
-        WordList wordList = new WordList();
-
-        //пользовательский выбор категории слов
-        cycleControlVariable = true;
-        int wordCategory;
-        do{
-            System.out.println("Выберите категорию слов: cars (легко), birds (средне) или cities (сложно)." +
-                    "\n" + "Введите только одно слово: cars, birds или cities: ");
-            BufferedReader inputWord = new BufferedReader(new InputStreamReader(System.in));
-
-            wordCategory = getWordCategory(getFirstWord(inputWord.readLine().trim()));
-            if(wordCategory < 0){
-                System.out.println("Вы ввели неверную категорию слов." + "\n" +
-                        "Для выбора категории слов по умолчанию нажмите \"Enter\"");
-                continue;
-            }
-            cycleControlVariable = false;
-        } while(cycleControlVariable);
-
-        //получить слово для угадывания
-        String word = wordList.getWordFromList(wordCategory);
-
-        //ядро игры
-        GameCore game = new GameCore(difficulty, word);
-        try{
-            game.start();
-        } catch (IOException e){
-            System.out.println("Не удалось считать пользовательский ввод внутри метода game.start()");
         }
-
-
-
-
-
-
-
-
-
-
     }
 
 
@@ -91,11 +98,15 @@ public class Gallows_game {
     //метод для определения выбранной пользователем категории слов или установления дефолтной
     public static int getWordCategory(String inputWord){
         return switch (inputWord) {
-            case "cars" -> 1;
-            case "", "birds" -> 2;
-            case "cities" -> 3;
+            case "машины" -> 1;
+            case "", "ученые" -> 2;
+            case "столицы" -> 3;
             default -> -1;
         };
+    }
+
+    public static void ReloadGame(String[] args) {
+        System.out.println("Хотите начать заново? y/n");
     }
 
 }
